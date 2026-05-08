@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}股票选股系统 - 回测结果{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="mb-6">
+                <h1 class="mb-2">回测结果</h1>
+                <p class="text-muted">详细分析策略的历史表现和风险指标</p>
+            </div>
+            
+            <!-- 策略选择表单 -->
+            <div class="card mb-6">
+                <div class="card-body">
+                    <form method="GET" action="{{ url_for('backtest_results') }}">
+                        <div class="row g-3 align-items-center justify-content-start">
+                            <div class="col-md-3">
+                                <label for="strategy" class="form-label">选择策略</label>
+                                <select id="strategy-selector" name="strategy" class="form-select" onchange="updateCharts(this.value)">
+                                    <option value="止损止盈策略" {% if selected_strategy == '止损止盈策略' %}selected{% endif %}>混合选股策略 + 止损止盈策略</option>
+                                    <option value="时间基础策略" {% if selected_strategy == '时间基础策略' %}selected{% endif %}>混合选股策略 + 时间基础策略</option>
+                                    <option value="RSI超买策略" {% if selected_strategy == 'RSI超买策略' %}selected{% endif %}>混合选股策略 + RSI超买策略</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 align-self-end">
+                                <button type="submit" class="btn btn-primary w-100">查询</button>
+                            </div>
+                            <div class="col-md-2 align-self-end">
+                                <a href="{{ url_for('export_backtest_results', strategy=selected_strategy) }}" class="btn btn-success w-100">导出CSV</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+                
+                <!-- 回测指标卡片 -->
+                <div class="mb-6">
+                    <h3 class="mb-3">回测指标</h3>
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <div class="card metric-card">
+                                <div class="card-body">
+                                    <h5 class="card-title metric-label">总收益率</h5>
+                                    <div class="metric-value {% if metrics['总收益率']|float >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                        {{ metrics['总收益率'] }}%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card metric-card">
+                                <div class="card-body">
+                                    <h5 class="card-title metric-label">年化收益率</h5>
+                                    <div class="metric-value {% if metrics['年化收益率']|float >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                        {{ metrics['年化收益率'] }}%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card metric-card">
+                                <div class="card-body">
+                                    <h5 class="card-title metric-label">最大回撤</h5>
+                                    <div class="metric-value text-danger">
+                                        {{ metrics['最大回撤'] }}%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card metric-card">
+                                <div class="card-body">
+                                    <h5 class="card-title metric-label">夏普比率</h5>
+                                    <div class="metric-value text-primary">
+                                        {{ metrics['夏普比率'] }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card metric-card">
+                                <div class="card-body">
+                                    <h5 class="card-title metric-label">胜率</h5>
+                                    <div class="metric-value {% if metrics['胜率']|float >= 50 %}text-success{% else %}text-danger{% endif %}">
+                                        {{ metrics['胜率'] }}%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 累计收益率曲线 -->
+                <div class="mb-6">
+                    <h3 class="mb-3">累计收益率曲线</h3>
+                    <div class="card">
+                        <div class="card-body">
+                            {{ plot_html_cumulative | safe }}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 已实现收益率曲线 -->
+                <div class="mb-6">
+                    <h3 class="mb-3">已实现收益率曲线</h3>
+                    <div class="card">
+                        <div class="card-body">
+                            {{ plot_html_realized | safe }}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 日收益率分布 -->
+                <div class="mb-6">
+                    <h3 class="mb-3">日收益率分布</h3>
+                    <div class="card">
+                        <div class="card-body">
+                            {{ plot_html_returns_dist | safe }}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 资金曲线 -->
+                <div class="mb-6">
+                    <h3 class="mb-3">资金曲线</h3>
+                    <div class="card">
+                        <div class="card-body">
+                            {{ plot_html_capital | safe }}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 回撤曲线 -->
+                <div class="mb-6">
+                    <h3 class="mb-3">回撤曲线</h3>
+                    <div class="card">
+                        <div class="card-body">
+                            {{ plot_html_drawdown | safe }}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 回测详情表格 -->
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <h5 class="card-title mb-0">回测详情</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered mb-0">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>日期</th>
+                                        <th>总价值(元)</th>
+                                        <th>累计收益率(%)</th>
+                                        <th>回撤(%)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if daily_values %}
+                                    {% for item in daily_values %}
+                                    <tr>
+                                        <td>{{ item.日期.strftime('%Y-%m-%d') }}</td>
+                                        <td>{{ item.总价值 | round(2) }}</td>
+                                        <td class="{% if item.累计收益率 | round(2) >= 0 %}positive-value{% else %}negative-value{% endif %}">
+                                            {{ item.累计收益率 | round(2) }}
+                                        </td>
+                                        <td class="{% if item.回撤 is not none and item.回撤 | round(2) > 0 %}negative-value{% else %}neutral-value{% endif %}">
+                                            {{ item.回撤 | round(2) if item.回撤 is not none else '0.00' }}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    {% else %}
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted py-4">暂无回测数据</td>
+                                    </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+{% endblock %}

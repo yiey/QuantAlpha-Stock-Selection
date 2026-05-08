@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}股票选股系统 - 卖出策略对比{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="mb-6">
+                <h1 class="mb-2">卖出策略回测对比</h1>
+                <p class="text-muted">对比三种不同卖出策略的历史表现和风险指标</p>
+            </div>
+            
+            {% if error_message %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error_message }}
+                </div>
+            {% else %}
+                <!-- 策略性能指标对比 -->
+                <div class="mb-6">
+                    <h3 class="mb-3">策略性能指标对比</h3>
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>策略名称</th>
+                                        <th>总收益率(%)</th>
+                                        <th>年化收益率(%)</th>
+                                        <th>最大回撤(%)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for metric in metrics_comparison %}
+                                    <tr>
+                                        <td>{{ metric['策略名称'] }}</td>
+                                        <td class="{% if metric['总收益率(%)'] >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                            {{ metric['总收益率(%)'] }}
+                                        </td>
+                                        <td class="{% if metric['年化收益率(%)'] >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                            {{ metric['年化收益率(%)'] }}
+                                        </td>
+                                        <td class="text-danger">{{ metric['最大回撤(%)'] }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 累计收益率对比图 -->
+                <div class="mb-6">
+                    <h3 class="mb-3">累计收益率对比</h3>
+                    <div class="card">
+                        <div class="card-body">
+                            {{ comparison_plot_html | safe }}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

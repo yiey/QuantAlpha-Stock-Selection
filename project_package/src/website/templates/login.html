@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}登录 - 股票选股系统{% endblock %}
+
+{% block head %}
+<style>
+    body {
+        background-color: var(--bg-color);
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .login-container {
+        width: 100%;
+        max-width: 500px;
+        padding: 0 1rem;
+    }
+    
+    .login-card {
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+    
+    .login-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+    
+    .login-card .card-body {
+        padding: 2rem;
+    }
+    
+    .form-control {
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        padding: 0.75rem;
+        transition: border-color 0.3s ease;
+    }
+    
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(0, 86, 179, 0.25);
+    }
+    
+    /* 响应式调整 */
+    @media (max-width: 576px) {
+        .login-card .card-body {
+            padding: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-card card">
+        <div class="card-body">
+            <div class="text-center mb-4">
+                <h2 class="text-primary"><i class="fas fa-chart-line me-2"></i>股票选股系统</h2>
+                <p class="text-muted">专业的量化交易平台</p>
+            </div>
+            
+            <h5 class="card-title text-center mb-4">登录</h5>
+            
+            <form method="POST">
+                <div class="mb-4">
+                    <label for="username" class="form-label">用户名</label>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="请输入用户名" required>
+                </div>
+                <div class="mb-4">
+                    <label for="password" class="form-label">密码</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="请输入密码" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">登录</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,68 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Data files - 股票数据 (大型数据文件)
+选股/1-500/*.csv
+选股/501-1000/*.csv
+1-500/
+501-1000/
+
+# Reports and outputs
+reports/
+*.log
+stock_system.log
+website.log
+
+# Config files (keep example configs if available)
+*.yaml
+*.yml
+
+# Pickle files
+*.pickle
+*.pkl
+
+# Jupyter
+.ipynb_checkpoints
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Additional
+*.docx
+*.doc
+各特征.txt
+报告.txt

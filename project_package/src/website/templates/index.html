@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}股票选股系统 - 首页{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="mb-6">
+                <h1 class="mb-2">欢迎使用股票选股策略与闭环交易系统</h1>
+                <p class="text-muted">基于机器学习的智能选股和自动交易平台，为您提供专业的投资决策支持</p>
+            </div>
+            
+            <!-- 系统概览卡片 -->
+            <div class="row g-3 mb-6">
+                <div class="col-md-3">
+                    <div class="card metric-card">
+                        <div class="card-body">
+                            <h5 class="card-title metric-label">今日选股数量</h5>
+                            <div class="metric-value text-primary">
+                                {{ today_stock_count|default(0) }}
+                            </div>
+                            <div class="text-muted mt-1">
+                                <small>基于AI模型筛选</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card metric-card">
+                        <div class="card-body">
+                            <h5 class="card-title metric-label">当前持仓股票</h5>
+                            <div class="metric-value text-success">
+                                {{ current_position_count|default(0) }}
+                            </div>
+                            <div class="text-muted mt-1">
+                                <small>实时持仓数量</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card metric-card">
+                        <div class="card-body">
+                            <h5 class="card-title metric-label">策略年化收益</h5>
+                            <div class="metric-value {% if current_year_return|default(0)|float >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                {{ current_year_return|default(0) }}%
+                            </div>
+                            <div class="text-muted mt-1">
+                                <small>今年累计收益率</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card metric-card">
+                        <div class="card-body">
+                            <h5 class="card-title metric-label">最大回撤</h5>
+                            <div class="metric-value text-danger">
+                                {{ max_drawdown|default(0) }}%
+                            </div>
+                            <div class="text-muted mt-1">
+                                <small>历史最大回撤</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 主要功能模块 -->
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3">
+                                    <i class="fas fa-list text-primary fs-4"></i>
+                                </div>
+                                <h5 class="card-title mb-0">智能选股池</h5>
+                            </div>
+                            <p class="card-text">基于机器学习模型的每日智能选股，按模型得分排序，为您提供最优的投资标的。</p>
+                            <ul class="list-unstyled mt-3 mb-4">
+                                <li class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <span>多因子量化分析</span>
+                                </li>
+                                <li class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <span>实时市场数据更新</span>
+                                </li>
+                                <li class="d-flex align-items-center">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <span>行业分布均衡</span>
+                                </li>
+                            </ul>
+                            <a href="{{ url_for('stock_pool') }}" class="btn btn-primary w-100">
+                                <i class="fas fa-arrow-right me-1"></i>
+                                查看选股池
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-success bg-opacity-10 p-3 rounded-circle me-3">
+                                    <i class="fas fa-exchange-alt text-success fs-4"></i>
+                                </div>
+                                <h5 class="card-title mb-0">实时交易监控</h5>
+                            </div>
+                            <p class="card-text">实时监控您的交易账户和持仓情况，随时掌握投资动态和收益变化。</p>
+                            <ul class="list-unstyled mt-3 mb-4">
+                                <li class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <span>实时持仓数据</span>
+                                </li>
+                                <li class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <span>收益自动计算</span>
+                                </li>
+                                <li class="d-flex align-items-center">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <span>交易记录追踪</span>
+                                </li>
+                            </ul>
+                            <a href="{{ url_for('trading_status') }}" class="btn btn-primary w-100">
+                                <i class="fas fa-arrow-right me-1"></i>
+                                查看交易状态
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-info bg-opacity-10 p-3 rounded-circle me-3">
+                                    <i class="fas fa-chart-bar text-info fs-4"></i>
+                                </div>
+                                <h5 class="card-title mb-0">策略回测分析</h5>
+                            </div>
+                            <p class="card-text">详细分析策略的历史表现和风险指标，为您提供科学的投资决策参考。</p>
+                            <ul class="list-unstyled mt-3 mb-4">
+                                <li class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <span>多维度回测指标</span>
+                                </li>
+                                <li class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <span>可视化收益曲线</span>
+                                </li>
+                                <li class="d-flex align-items-center">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <span>风险收益分析</span>
+                                </li>
+                            </ul>
+                            <a href="{{ url_for('backtest_results') }}" class="btn btn-primary w-100">
+                                <i class="fas fa-arrow-right me-1"></i>
+                                查看回测结果
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
